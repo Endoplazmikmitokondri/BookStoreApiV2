@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookStoreAPI.Controllers
+namespace BookStoreApiV2.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

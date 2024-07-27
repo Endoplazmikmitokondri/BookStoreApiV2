@@ -139,3 +139,4 @@ C:\Users\boraa\OneDrive\Desktop\BookStoreApiV2\bin\Debug\net8.0\Microsoft.AspNet
 C:\Users\boraa\OneDrive\Desktop\BookStoreApiV2\bin\Debug\net8.0\MySqlConnector.dll
 C:\Users\boraa\OneDrive\Desktop\BookStoreApiV2\bin\Debug\net8.0\Pomelo.EntityFrameworkCore.MySql.dll
 C:\Users\boraa\OneDrive\Desktop\BookStoreApiV2\obj\Debug\net8.0\BookStoreApiV2.sourcelink.json
+C:\Users\boraa\OneDrive\Desktop\BookStoreApiV2\bin\Debug\net8.0\BCrypt.Net-Next.dll
