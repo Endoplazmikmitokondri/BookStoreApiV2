@@ -26,10 +26,17 @@ namespace BookStoreAPI.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] User user)
         {
+            // Basit bir örnek: Kayıt olma sırasında rol belirlemesi yapılabilir
+            if (user.Role != "Admin" && user.Role != "Seller" && user.Role != "Buyer")
+            {
+                return BadRequest(new { message = "Invalid role" });
+            }
+
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
             return Ok(new { message = "User registered successfully" });
         }
+
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] User user)
@@ -44,8 +51,8 @@ namespace BookStoreAPI.Controllers
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, dbUser.Username),
-                    new Claim(ClaimTypes.Role, dbUser.Role)
+            new Claim(ClaimTypes.Name, dbUser.Username),
+            new Claim(ClaimTypes.Role, dbUser.Role) // Role bilgisi ekleniyor
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
@@ -57,5 +64,6 @@ namespace BookStoreAPI.Controllers
 
             return Ok(new { token = tokenString });
         }
+
     }
 }

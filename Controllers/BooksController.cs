@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace BookStoreAPI.Controllers
+namespace BookStoreApiV2.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
