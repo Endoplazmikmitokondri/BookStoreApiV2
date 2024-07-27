@@ -4,6 +4,7 @@ using BookStoreApiV2.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookStoreApiV2.Migrations
 {
     [DbContext(typeof(BookStoreContext))]
-    partial class BookStoreContextModelSnapshot : ModelSnapshot
+    [Migration("20240727164938_AddAutoIncrementToId")]
+    partial class AddAutoIncrementToId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,18 +39,22 @@ namespace BookStoreApiV2.Migrations
                         .HasColumnType("varchar(100)");
 
                     b.Property<string>("CreatedBy")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("CreatedByRole")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<DateTime?>("CreatedDate")
+                    b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("DeletedBy")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("DeletedByRole")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<DateTime?>("DeletedDate")
