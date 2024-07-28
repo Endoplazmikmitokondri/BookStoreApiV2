@@ -34,5 +34,6 @@ namespace BookStoreApiV2.Models
         public string? CreatedBy { get; set; } // Nullable
         public string? CreatedByRole { get; set; } // Nullable
         public DateTime? CreatedDate { get; set; } // Nullable
+
     }
 }
