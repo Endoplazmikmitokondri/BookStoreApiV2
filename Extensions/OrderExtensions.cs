@@ -1,31 +1,35 @@
+using BookStoreApiV2.Dtos;
 using BookStoreApiV2.Models;
-using System;
 
 namespace BookStoreApiV2.Extensions
 {
     public static class OrderExtensions
     {
-        public static OrderDto ToPublicDto(this Order order)
+        public static OrderPublicDto ToPublicDto(this Order order)
         {
-            return new OrderDto
+            return new OrderPublicDto
             {
                 Id = order.Id,
                 BookId = order.BookId,
-                OrderDate = TimeHelper.ConvertUtcToIstanbul(order.OrderDate),
-                Price = order.Price
+                BookTitle = order.Book.Title,
+                BookAuthor = order.Book.Author,
+                Price = order.Price,
+                OrderDate = TimeHelper.ConvertUtcToIstanbul(order.OrderDate)
             };
         }
 
-        public static AdminOrderDto ToAdminDto(this Order order)
+        public static OrderAdminDto ToAdminDto(this Order order)
         {
-            return new AdminOrderDto
+            return new OrderAdminDto
             {
                 Id = order.Id,
                 BookId = order.BookId,
-                BuyerId = order.BuyerId,
-                SellerId = order.SellerId,
+                BookTitle = order.Book.Title,
+                BookAuthor = order.Book.Author,
+                Price = order.Price,
                 OrderDate = TimeHelper.ConvertUtcToIstanbul(order.OrderDate),
-                Price = order.Price
+                BuyerId = order.BuyerId,
+                SellerId = order.SellerId
             };
         }
     }

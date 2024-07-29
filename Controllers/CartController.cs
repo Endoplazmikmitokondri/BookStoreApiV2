@@ -61,6 +61,25 @@ namespace BookStoreApiV2.Controllers
 
             return Ok("Book added to cart.");
         }
+        
+        [HttpDelete]
+        [Authorize(Roles = "Buyer")]
+        public async Task<IActionResult> ClearCart()
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var cartItems = await _context.Carts
+                .Where(c => c.BuyerId == userId)
+                .ToListAsync();
+
+            if (!cartItems.Any())
+                return NotFound("Cart is already empty.");
+
+            _context.Carts.RemoveRange(cartItems);
+            await _context.SaveChangesAsync();
+
+            return Ok("Cart cleared successfully.");
+        }
 
         [HttpGet]
         [Authorize(Roles = "Buyer")]
@@ -70,9 +89,10 @@ namespace BookStoreApiV2.Controllers
             if (!int.TryParse(userIdClaim, out int buyerId))
                 return Unauthorized("User ID is invalid.");
 
-            var oneDayAgo = DateTime.UtcNow.AddDays(-1); // 1 gün öncesi
+            var oneDayAgoUtc = DateTime.UtcNow.AddDays(-1);
+            var oneDayAgoIstanbul = TimeHelper.ConvertUtcToIstanbul(oneDayAgoUtc);
             var cartItems = await _context.Carts
-                .Where(c => c.BuyerId == buyerId && c.CreatedDate > oneDayAgo)
+                .Where(c => c.BuyerId == buyerId && c.CreatedDate > oneDayAgoUtc)
                 .Include(c => c.Book)
                 .ToListAsync();
 

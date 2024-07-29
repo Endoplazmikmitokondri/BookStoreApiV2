@@ -10,12 +10,9 @@ namespace BookStoreApiV2.Models
         public int BuyerId { get; set; }
         public int SellerId { get; set; }
         public decimal Price { get; set; }
-        public string BuyerUsername { get; set; }
         public DateTime OrderDate { get; set; }
-        public decimal TotalPrice { get; set; }
-        public ICollection<OrderItem> OrderItems { get; set; }
+        public Book Book { get; set; }
     }
-
     public class OrderItem
     {
         public int Id { get; set; }
@@ -25,3 +22,6 @@ namespace BookStoreApiV2.Models
         public Book Book { get; set; }
     }
 }
+
+
+    

@@ -25,12 +25,12 @@ namespace BookStoreApiV2.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Buyer")]
-        public async Task<IActionResult> PlaceOrder([FromBody] Order order)
+        public async Task<IActionResult> PlaceOrder()
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
+            // Kullanıcı ID'sini JWT'den al
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // Kullanıcının kartındaki tüm kitapları al
             var cartItems = await _context.Carts
                 .Include(c => c.Book)
                 .Where(c => c.BuyerId == userId)
@@ -41,6 +41,13 @@ namespace BookStoreApiV2.Controllers
 
             foreach (var cartItem in cartItems)
             {
+                var book = cartItem.Book;
+                
+                if (book.Stock <= 0)
+                {
+                    return BadRequest($"Book {book.Title} is out of stock.");
+                }
+
                 var newOrder = new Order
                 {
                     BookId = cartItem.BookId,
@@ -50,13 +57,16 @@ namespace BookStoreApiV2.Controllers
                     Price = cartItem.Book.Price
                 };
 
+                // Stoktan düş
+                book.Stock--;
+
                 _context.Orders.Add(newOrder);
                 _context.Carts.Remove(cartItem);
             }
 
             await _context.SaveChangesAsync();
 
-            return Ok();
+            return Ok("Order placed successfully.");
         }
 
         [HttpGet("buyer")]
