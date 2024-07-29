@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookStoreApiV2.Migrations
 {
     [DbContext(typeof(BookStoreContext))]
-    [Migration("20240729032345_UpdateModels")]
-    partial class UpdateModels
+    [Migration("20240729145856_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -128,10 +128,6 @@ namespace BookStoreApiV2.Migrations
                     b.Property<int>("BuyerId")
                         .HasColumnType("int");
 
-                    b.Property<string>("BuyerUsername")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime(6)");
 
@@ -141,41 +137,11 @@ namespace BookStoreApiV2.Migrations
                     b.Property<int>("SellerId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Order", (string)null);
-                });
-
-            modelBuilder.Entity("BookStoreApiV2.Models.OrderItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BookId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("BookId");
 
-                    b.HasIndex("OrderId");
-
-                    b.ToTable("OrderItem");
+                    b.ToTable("Order", (string)null);
                 });
 
             modelBuilder.Entity("BookStoreApiV2.Models.User", b =>
@@ -225,7 +191,7 @@ namespace BookStoreApiV2.Migrations
                     b.Navigation("Buyer");
                 });
 
-            modelBuilder.Entity("BookStoreApiV2.Models.OrderItem", b =>
+            modelBuilder.Entity("BookStoreApiV2.Models.Order", b =>
                 {
                     b.HasOne("BookStoreApiV2.Models.Book", "Book")
                         .WithMany()
@@ -233,16 +199,7 @@ namespace BookStoreApiV2.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BookStoreApiV2.Models.Order", null)
-                        .WithMany("OrderItems")
-                        .HasForeignKey("OrderId");
-
                     b.Navigation("Book");
-                });
-
-            modelBuilder.Entity("BookStoreApiV2.Models.Order", b =>
-                {
-                    b.Navigation("OrderItems");
                 });
 #pragma warning restore 612, 618
         }
