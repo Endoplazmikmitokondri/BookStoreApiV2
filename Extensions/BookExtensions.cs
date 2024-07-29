@@ -12,7 +12,7 @@ namespace BookStoreApiV2.Extensions
                 Id = book.Id,
                 Title = book.Title,
                 Author = book.Author,
-                Price = book.Price, // Burada Price'ı decimal olarak bırakıyoruz
+                Price = book.Price,
                 Description = book.Description,
                 Stock = book.Stock,
                 IsDeleted = book.IsDeleted,

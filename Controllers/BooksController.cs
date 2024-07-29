@@ -35,7 +35,7 @@ namespace BookStoreApiV2.Controllers
             var role = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
 
             book.CreatedBy = username;
-            book.CreatedById = userId; // Kullanıcı ID'sini ekleyin
+            book.CreatedById = userId;
             book.CreatedByRole = role;
             book.CreatedDate = TimeHelper.ConvertUtcToIstanbul(DateTime.UtcNow);
             book.IsDeleted = false;
