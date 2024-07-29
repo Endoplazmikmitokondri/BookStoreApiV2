@@ -60,7 +60,6 @@ namespace BookStoreApiV2.Controllers
             await _context.SaveChangesAsync();
 
             return Ok("Book added to cart.");
-<<<<<<< HEAD
         }
         
         [HttpDelete]
@@ -80,8 +79,6 @@ namespace BookStoreApiV2.Controllers
             await _context.SaveChangesAsync();
 
             return Ok("Cart cleared successfully.");
-=======
->>>>>>> 623c66a209499129ee4838c910c67486c72a4a4e
         }
 
         [HttpGet]
@@ -92,16 +89,10 @@ namespace BookStoreApiV2.Controllers
             if (!int.TryParse(userIdClaim, out int buyerId))
                 return Unauthorized("User ID is invalid.");
 
-<<<<<<< HEAD
             var oneDayAgoUtc = DateTime.UtcNow.AddDays(-1);
             var oneDayAgoIstanbul = TimeHelper.ConvertUtcToIstanbul(oneDayAgoUtc);
             var cartItems = await _context.Carts
                 .Where(c => c.BuyerId == buyerId && c.CreatedDate > oneDayAgoUtc)
-=======
-            var oneDayAgo = DateTime.UtcNow.AddDays(-1); // 1 gün öncesi
-            var cartItems = await _context.Carts
-                .Where(c => c.BuyerId == buyerId && c.CreatedDate > oneDayAgo)
->>>>>>> 623c66a209499129ee4838c910c67486c72a4a4e
                 .Include(c => c.Book)
                 .ToListAsync();
 

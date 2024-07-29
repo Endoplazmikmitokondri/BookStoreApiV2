@@ -188,24 +188,6 @@ namespace BookStoreApiV2.Migrations
                     b.Navigation("Buyer");
                 });
 
-<<<<<<< HEAD
-=======
-            modelBuilder.Entity("BookStoreApiV2.Models.OrderItem", b =>
-                {
-                    b.HasOne("BookStoreApiV2.Models.Book", "Book")
-                        .WithMany()
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BookStoreApiV2.Models.Order", null)
-                        .WithMany("OrderItems")
-                        .HasForeignKey("OrderId");
-
-                    b.Navigation("Book");
-                });
-
->>>>>>> 623c66a209499129ee4838c910c67486c72a4a4e
             modelBuilder.Entity("BookStoreApiV2.Models.Order", b =>
                 {
                     b.HasOne("BookStoreApiV2.Models.Book", "Book")
