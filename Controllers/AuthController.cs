@@ -60,6 +60,7 @@ namespace BookStoreApiV2.Controllers
                 Subject = new ClaimsIdentity(new Claim[]
                 {
             new Claim(ClaimTypes.Name, user.Username),
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), // Kullanıcı ID'sini ekliyoruz
             new Claim(ClaimTypes.Role, user.Role)
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),

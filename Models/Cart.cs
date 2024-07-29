@@ -1,14 +1,16 @@
 namespace BookStoreApiV2.Models
 {
     public class Cart
-    {
-        public int Id { get; set; }
-        public int BookId { get; set; }
-        public int UserId { get; set; }
-        public Book Book { get; set; }
-        public string BuyerUsername { get; set; }
-        public List<CartItem> CartItems { get; set; }
-    }
+{
+    public int Id { get; set; }
+    public int BookId { get; set; }
+    public Book Book { get; set; }
+    public int BuyerId { get; set; }
+    public User Buyer { get; set; }
+    public int Quantity { get; set; }
+    public DateTime CreatedDate { get; set; }
+}
+
 
     public class CartItem
     {

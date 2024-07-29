@@ -30,12 +30,21 @@ namespace BookStoreApiV2.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var username = User.Identity.Name;
             var role = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
 
+            // Kullanıcı ID'sini JWT'den al
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            if (int.TryParse(userIdClaim, out int userId))
+            {
+                book.CreatedById = userId;
+            }
+            else
+            {
+                return BadRequest("User ID is invalid.");
+            }
+
             book.CreatedBy = username;
-            book.CreatedById = userId;
             book.CreatedByRole = role;
             book.CreatedDate = TimeHelper.ConvertUtcToIstanbul(DateTime.UtcNow);
             book.IsDeleted = false;

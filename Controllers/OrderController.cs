@@ -33,7 +33,7 @@ namespace BookStoreApiV2.Controllers
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var cartItems = await _context.Carts
                 .Include(c => c.Book)
-                .Where(c => c.UserId == userId)
+                .Where(c => c.BuyerId == userId)
                 .ToListAsync();
 
             if (!cartItems.Any())
