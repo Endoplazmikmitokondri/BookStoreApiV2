@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
-using BookStoreApiV2.Models;
-using BookStoreApiV2.Data;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using System.Linq;
+using System.Threading.Tasks;
+using BookStoreApiV2.Data;
+using BookStoreApiV2.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+
 
 namespace BookStoreApiV2.Controllers
 {
@@ -23,53 +23,85 @@ namespace BookStoreApiV2.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Buyer")]
-        public async Task<IActionResult> AddToCart([FromBody] Cart cart)
+        public async Task<IActionResult> AddToCart([FromBody] AddToCartDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!int.TryParse(userIdString, out var userId))
-                return BadRequest("Invalid user ID.");
+            // Kullanıcı ID'sini JWT'den al
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userIdClaim, out int buyerId))
+                return Unauthorized("User ID is invalid.");
 
-            // Check if book is available and not deleted
-            var book = await _context.Books.FindAsync(cart.BookId);
-            if (book == null || book.IsDeleted || book.Stock <= 0)
-                return BadRequest("Book is not available.");
+            var book = await _context.Books.FindAsync(dto.BookId);
+            if (book == null)
+                return NotFound("Book not found.");
 
-            cart.UserId = userId;
-            _context.Carts.Add(cart);
+            var existingCartItem = await _context.Carts
+                .FirstOrDefaultAsync(c => c.BookId == dto.BookId && c.BuyerId == buyerId);
+
+            if (existingCartItem != null)
+            {
+                existingCartItem.Quantity += dto.Quantity;
+                _context.Carts.Update(existingCartItem);
+            }
+            else
+            {
+                var newCartItem = new Cart
+                {
+                    BookId = dto.BookId,
+                    BuyerId = buyerId,
+                    Quantity = dto.Quantity,
+                    CreatedDate = DateTime.UtcNow // Tarihi ata
+                };
+                _context.Carts.Add(newCartItem);
+            }
+
             await _context.SaveChangesAsync();
 
-            return Ok(cart);
+            return Ok("Book added to cart.");
         }
 
         [HttpGet]
         [Authorize(Roles = "Buyer")]
         public async Task<IActionResult> GetCart()
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!int.TryParse(userIdString, out var userId))
-                return BadRequest("Invalid user ID.");
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userIdClaim, out int buyerId))
+                return Unauthorized("User ID is invalid.");
 
+            var oneDayAgo = DateTime.UtcNow.AddDays(-1); // 1 gün öncesi
             var cartItems = await _context.Carts
+                .Where(c => c.BuyerId == buyerId && c.CreatedDate > oneDayAgo)
                 .Include(c => c.Book)
-                .Where(c => c.UserId == userId)
                 .ToListAsync();
 
-            return Ok(cartItems);
+            if (cartItems == null || !cartItems.Any())
+                return NotFound("Cart is empty.");
+
+            return Ok(cartItems.Select(c => new CartDto
+            {
+                Id = c.Id,
+                BookId = c.BookId,
+                Title = c.Book.Title,
+                Author = c.Book.Author,
+                Quantity = c.Quantity
+            }));
         }
 
-        [HttpGet("{buyerId}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetCartByBuyer(int buyerId)
+        public class AddToCartDto
         {
-            var cartItems = await _context.Carts
-                .Include(c => c.Book)
-                .Where(c => c.UserId == buyerId)
-                .ToListAsync();
+            public int BookId { get; set; }
+            public int Quantity { get; set; }
+        }
 
-            return Ok(cartItems);
+        public class CartDto
+        {
+            public int Id { get; set; }
+            public int BookId { get; set; }
+            public string Title { get; set; }
+            public string Author { get; set; }
+            public int Quantity { get; set; }
         }
     }
 }
