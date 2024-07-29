@@ -11,8 +11,8 @@ namespace BookStoreApiV2.Extensions
             {
                 Id = order.Id,
                 BookId = order.BookId,
-                BookTitle = order.Book.Title,
-                BookAuthor = order.Book.Author,
+                BookTitle = order.Book?.Title,
+                BookAuthor = order.Book?.Author,
                 Price = order.Price,
                 OrderDate = TimeHelper.ConvertUtcToIstanbul(order.OrderDate)
             };
