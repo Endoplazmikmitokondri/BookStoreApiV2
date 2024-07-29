@@ -30,10 +30,12 @@ namespace BookStoreApiV2.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var username = User.Identity.Name;
             var role = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
 
             book.CreatedBy = username;
+            book.CreatedById = userId; // Kullanıcı ID'sini ekleyin
             book.CreatedByRole = role;
             book.CreatedDate = TimeHelper.ConvertUtcToIstanbul(DateTime.UtcNow);
             book.IsDeleted = false;

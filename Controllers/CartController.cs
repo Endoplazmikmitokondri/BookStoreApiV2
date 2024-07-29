@@ -28,7 +28,9 @@ namespace BookStoreApiV2.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(userIdString, out var userId))
+                return BadRequest("Invalid user ID.");
 
             // Check if book is available and not deleted
             var book = await _context.Books.FindAsync(cart.BookId);
@@ -46,7 +48,10 @@ namespace BookStoreApiV2.Controllers
         [Authorize(Roles = "Buyer")]
         public async Task<IActionResult> GetCart()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(userIdString, out var userId))
+                return BadRequest("Invalid user ID.");
+
             var cartItems = await _context.Carts
                 .Include(c => c.Book)
                 .Where(c => c.UserId == userId)
@@ -57,7 +62,7 @@ namespace BookStoreApiV2.Controllers
 
         [HttpGet("{buyerId}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetCartByBuyer(string buyerId)
+        public async Task<IActionResult> GetCartByBuyer(int buyerId)
         {
             var cartItems = await _context.Carts
                 .Include(c => c.Book)

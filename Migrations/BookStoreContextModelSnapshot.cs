@@ -38,6 +38,9 @@ namespace BookStoreApiV2.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("longtext");
 
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("int");
+
                     b.Property<string>("CreatedByRole")
                         .HasColumnType("longtext");
 
@@ -76,7 +79,7 @@ namespace BookStoreApiV2.Migrations
 
                     b.HasIndex("IsDeleted");
 
-                    b.ToTable("Books");
+                    b.ToTable("Book", (string)null);
                 });
 
             modelBuilder.Entity("BookStoreApiV2.Models.Cart", b =>
@@ -87,13 +90,21 @@ namespace BookStoreApiV2.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
                     b.Property<string>("BuyerUsername")
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Carts");
+                    b.HasIndex("BookId");
+
+                    b.ToTable("Cart", (string)null);
                 });
 
             modelBuilder.Entity("BookStoreApiV2.Models.CartItem", b =>
@@ -130,6 +141,12 @@ namespace BookStoreApiV2.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BuyerId")
+                        .HasColumnType("int");
+
                     b.Property<string>("BuyerUsername")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -137,12 +154,18 @@ namespace BookStoreApiV2.Migrations
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<int>("SellerId")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("decimal(65,30)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Order", (string)null);
                 });
 
             modelBuilder.Entity("BookStoreApiV2.Models.OrderItem", b =>
@@ -200,6 +223,17 @@ namespace BookStoreApiV2.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("BookStoreApiV2.Models.Cart", b =>
+                {
+                    b.HasOne("BookStoreApiV2.Models.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
                 });
 
             modelBuilder.Entity("BookStoreApiV2.Models.CartItem", b =>

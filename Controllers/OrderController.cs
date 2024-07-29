@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Linq;
 using System.Security.Claims;
 using System;
+using BookStoreApiV2.Extensions;
 
 namespace BookStoreApiV2.Controllers
 {
@@ -29,7 +30,7 @@ namespace BookStoreApiV2.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var cartItems = await _context.Carts
                 .Include(c => c.Book)
                 .Where(c => c.UserId == userId)
@@ -44,13 +45,13 @@ namespace BookStoreApiV2.Controllers
                 {
                     BookId = cartItem.BookId,
                     BuyerId = userId,
-                    SellerId = cartItem.Book.CreatedBy,
+                    SellerId = cartItem.Book.CreatedById,
                     OrderDate = TimeHelper.ConvertUtcToIstanbul(DateTime.UtcNow),
-                    Price = $"{cartItem.Book.Price} ₺"
+                    Price = cartItem.Book.Price
                 };
 
                 _context.Orders.Add(newOrder);
-                _context.Carts.Remove(cartItem); // Clear cart after order
+                _context.Carts.Remove(cartItem);
             }
 
             await _context.SaveChangesAsync();
@@ -62,7 +63,7 @@ namespace BookStoreApiV2.Controllers
         [Authorize(Roles = "Buyer")]
         public async Task<IActionResult> GetBuyerOrders()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var orders = await _context.Orders
                 .Where(o => o.BuyerId == userId)
                 .ToListAsync();
@@ -76,7 +77,7 @@ namespace BookStoreApiV2.Controllers
         [Authorize(Roles = "Seller")]
         public async Task<IActionResult> GetSellerOrders()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var orders = await _context.Orders
                 .Where(o => o.SellerId == userId)
                 .ToListAsync();

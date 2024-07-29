@@ -18,6 +18,7 @@ namespace BookStoreApiV2.Models
         [Range(0, double.MaxValue, ErrorMessage = "Fiyat 0'a eşit veya daha fazlası olabilir.")]
         public decimal Price { get; set; }
 
+
         [StringLength(1000)]
         public string Description { get; set; }
 
@@ -34,6 +35,7 @@ namespace BookStoreApiV2.Models
         public string? CreatedBy { get; set; } // Nullable
         public string? CreatedByRole { get; set; } // Nullable
         public DateTime? CreatedDate { get; set; } // Nullable
+        public int CreatedById { get; set; }
 
     }
 }
