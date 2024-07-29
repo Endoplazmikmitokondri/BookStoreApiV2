@@ -36,6 +36,7 @@ namespace BookStoreApiV2.Models
         public string? CreatedByRole { get; set; } // Nullable
         public DateTime? CreatedDate { get; set; } // Nullable
         public int CreatedById { get; set; }
+        public ICollection<Order> Order { get; set; }
 
     }
 }
